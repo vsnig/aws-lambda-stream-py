@@ -1,3 +1,4 @@
+import sys
 from collections import namedtuple
 from functools import reduce
 
@@ -73,6 +74,7 @@ def assemble(**opt):
                 ops.multicast(
                     subject_factory=lambda _: Subject(), mapper=multicast_mapper(lines)
                 ),
+                ops.do_action(lambda x: print("AFTER MULTICAST!!")),
             )
             replay = (
                 ReplaySubject()
