@@ -37,3 +37,6 @@ def to_kinesis_records(events):
             for i, event in enumerate(events)
         ]
     }
+
+
+UNKNOWN_KINESIS_EVENT_TYPE = to_kinesis_records([{"type": "unknown-type"}])
