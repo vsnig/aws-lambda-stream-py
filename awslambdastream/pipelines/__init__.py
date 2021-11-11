@@ -56,13 +56,16 @@ def assemble(**opt):
                             pipe_ops.append(ops.catch(fault_handler))
 
                         return shared.pipe(
+                            ops.do_action(lambda x: print("INSIDE 1")),
                             ops.map(
                                 lambda uow: {
                                     "pipeline": pipeline.id,  # todo: change to pipeline id
                                     **uow,
                                 }
                             ),
+                            ops.do_action(lambda x: print("INSIDE 2")),
                             ops.flat_map(lambda x: rx.of(x).pipe(*pipe_ops)),
+                            ops.do_action(lambda x: print("INSIDE 3")),
                         )
 
                     return rx.merge(*map(pl_mapper, lines))
@@ -71,6 +74,7 @@ def assemble(**opt):
 
             # todo: see original, what's with last pipeline?
             merged = head.pipe(
+                ops.do_action(lambda x: print("BEFORE MULTICAST!!")),
                 ops.multicast(
                     subject_factory=lambda _: Subject(), mapper=multicast_mapper(lines)
                 ),
