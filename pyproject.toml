@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "aws-lambda-stream-py"
+version = "0.1.1"
+description = ""
+authors = ["Viacheslav Snizhko <4790093+snegostup@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+boto3 = "^1.18.64"
+rx = "^3.2.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+pytest-mock = "^3.6.1"
+pytest-cov = "^3.0.0"
+black = "*"
+pre-commit = "^2.15.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+

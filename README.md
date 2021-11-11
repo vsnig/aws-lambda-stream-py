@@ -5,7 +5,7 @@
 ## Details, differences and challenges
 snake_case instead of camelCase in variables, function names etc. 
 
-`RxPY` in place of `Highland.js` as underlying reactive framework. 
+`RxPY` in place of `Highland.js` as underlying reactive framework.
 
 With `RxPY` there's no (known to me) clean way to handle errors in source observables hence no error handling for `head` of pipelines. Any suggestions on this matter are appreciated.
 
