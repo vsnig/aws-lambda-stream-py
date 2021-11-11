@@ -1,14 +1,14 @@
-import uuid
-import traceback
 import os
+import traceback
+import uuid
 
 import rx
 from rx import operators as ops
 
-from awslambdastream.utils import now
-from awslambdastream.utils.rx import from_subject
 from awslambdastream.faults.handled import HandledException
+from awslambdastream.utils import now
 from awslambdastream.utils.eventbridge import publish_to_eventbridge as publish
+from awslambdastream.utils.rx import from_subject
 
 FAULT_EVENT_TYPE = "fault"
 

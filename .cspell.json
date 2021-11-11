@@ -1,5 +1,7 @@
 {
   "words": [
+    "isort",
+    "pytest",
     "awslambdastream",
     "unbatch",
     "boto",

@@ -32,7 +32,11 @@ Most useful features for me at the moment. Basically, it's pipelines for process
 Python 3.9+
 
 ## Install
-`pip install git+https://github.com/vsnig/aws-lambda-stream-py`
+`poetry add git+https://github.com/vsnig/aws-lambda-stream-py.git`
+ 
+ or
+
+`pip install git+https://github.com/vsnig/aws-lambda-stream-py.git`
 
 ## Example
 ```python

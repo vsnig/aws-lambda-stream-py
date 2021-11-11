@@ -1,5 +1,6 @@
 from awslambdastream.faults import handled
 
+
 # use as @decorator
 def faulty(fn):
     def _fn(uow, *args, **kwargs):

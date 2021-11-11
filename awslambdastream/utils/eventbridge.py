@@ -1,14 +1,15 @@
 import json
 import logging
-import rx
 from functools import reduce
+
+import rx
 from rx import operators as ops
 from rx.scheduler.threadpoolscheduler import ThreadPoolScheduler
 
-from awslambdastream.utils.faults import throw_fault
-from awslambdastream.utils.batch import to_batch_uow, unbatch_uow
-from awslambdastream.utils.json import MyEncoder
 from awslambdastream.connectors.eventbridge import EventBridgeConnector
+from awslambdastream.utils.batch import to_batch_uow, unbatch_uow
+from awslambdastream.utils.faults import throw_fault
+from awslambdastream.utils.json import MyEncoder
 
 
 def publish_to_eventbridge(

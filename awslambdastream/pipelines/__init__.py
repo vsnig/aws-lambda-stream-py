@@ -1,9 +1,10 @@
-import rx
 from collections import namedtuple
 from functools import reduce
+
+import rx
 from rx import operators as ops
-from rx.subject import Subject, ReplaySubject
 from rx.core import Observable
+from rx.subject import ReplaySubject, Subject
 
 from awslambdastream.faults import fault_handler, flush_faults
 from awslambdastream.utils.faults import is_error
