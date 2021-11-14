@@ -33,45 +33,63 @@ Most useful features for me at the moment. Basically, it's pipelines for process
 ## Install
 `poetry add git+https://github.com/vsnig/aws-lambda-stream-py.git`
 
-<!-- ## Example
+## Example
 ```python
-# pipeline.py
+# classify_pipeline.py
 from rx import operators as ops
-from awslambdastream import faulty, publish
 
-def pipeline(**opt):
-  @faulty
-  def classify(uow):
-    result = classify_text(uow['thing']['text'])
-    return {
-      **uow,
-      classificationResult: result
-    }
-  
-  def _pipeline(s):
-    return s.pipe(
-      ops.map(classify)
-      opt["publish"](**opt)
-    )
-  return _pipeline
+from awslambdastream import faulty
+
+def classify_pipeline(**opt):
+    def _classify_pipeline(s):
+        return s.pipe(
+            ops.filter(on_event),
+            ops.map(to_classification_result),
+            ops.map(to_publish_request),
+            opt["publish"](**opt),
+        )
+
+    return _classify_pipeline
+
+
+@faulty
+def on_event(uow):
+    return uow["event"]["type"] == "document-created"
+
+
+@faulty
+def to_classification_result(uow):
+    result = classify_text(uow["event"]["document"]["text"])
+    return {**uow, "classificationResult": result}
+
+...
 ```
 
 ```python
-# handler.py
-from awslambdastream import initialize, from_kinesis, default_options
+# listener.py
+from awslambdastream import default_options, from_kinesis, initialize
 
-from pipeline1 import pipeline1
-from pipeline2 import pipeline2
+from .classify_pipeline import classify_pipeline
 
-PIPELINES = {
-  "pipeline1": pipeline1,
-  "pipeline2": pipeline2,
-}
+PIPELINES = {"classify_pipeline": classify_pipeline}
 
-OPTIONS = { **default_options, ... }
+OPTIONS = {**default_options}
 
-def handler(event):
-  return initialize(PIPELINES, OPTIONS) \
-    .assemble(from_kinesis(event)) \
-    .run()
-``` -->
+
+class Handler:
+    def __init__(self, options=OPTIONS):
+        self.options = options
+
+    def handle(self, event, include_errors=True):
+        return initialize(PIPELINES, **self.options).assemble(
+            from_kinesis(event), include_errors
+        )
+
+
+def handle(event, context):
+    print("event: ", event)
+    print("context: ", context)
+
+    Handler({**OPTIONS}).handle(event).run()
+    return "Success"
+```
