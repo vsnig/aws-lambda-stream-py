@@ -2,12 +2,10 @@
 
 **_(non-official) python implementation of [aws-lambda-stream](https://github.com/jgilbert01/aws-lambda-stream)_**
 
-## Details, differences and challenges
+## Details and differences
 snake_case instead of camelCase in variables, function names etc. 
 
 `RxPY` in place of `Highland.js` as underlying reactive framework.
-
-With `RxPY` there's no (known to me) clean way to handle errors in source observables hence no error handling for `head` of pipelines. Any suggestions on this matter are appreciated.
 
 ## What's implemented
 Most useful features for me at the moment. Basically, it's pipelines for processing Kinesis events and publishing to EventBridge (with parallel processing and error handling).
@@ -29,16 +27,13 @@ Most useful features for me at the moment. Basically, it's pipelines for process
 - - [x] to_kinesis_records
 
 ## Requirements
-Python 3.9+
+- Python 3.9+
+- Poetry
 
 ## Install
 `poetry add git+https://github.com/vsnig/aws-lambda-stream-py.git`
- 
- or
 
-`pip install git+https://github.com/vsnig/aws-lambda-stream-py.git`
-
-## Example
+<!-- ## Example
 ```python
 # pipeline.py
 from rx import operators as ops
@@ -79,4 +74,4 @@ def handler(event):
   return initialize(PIPELINES, OPTIONS) \
     .assemble(from_kinesis(event)) \
     .run()
-```
+``` -->
