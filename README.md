@@ -28,7 +28,6 @@ Most useful features for me at the moment. Basically, it's pipelines for process
 
 ## Requirements
 - Python 3.9+
-- Poetry
 
 ## Install
 `poetry add git+https://github.com/vsnig/aws-lambda-stream-py.git`
