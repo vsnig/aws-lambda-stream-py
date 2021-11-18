@@ -5,5 +5,5 @@ from .json import *
 from .logging import *
 from .misc import *
 from .opt import *
-from .rx import *
+from .pipelines import *
 from .time import *

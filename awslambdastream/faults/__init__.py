@@ -5,60 +5,40 @@ import uuid
 import rx
 from rx import operators as ops
 
-from awslambdastream.faults.handled import HandledException
-from awslambdastream.utils import now
-from awslambdastream.utils.eventbridge import publish_to_eventbridge as publish
-from awslambdastream.utils.rx import from_subject
+from awslambdastream.utils.faults import HandledException
+from awslambdastream.utils.time import now
 
 FAULT_EVENT_TYPE = "fault"
 
 
-def fault_handler(e, _):
-    if type(e) == HandledException:
-        return rx.of(e)
-    else:
-        # rethrow unhandled to stop processing
-        return rx.throw(e)
-
-
-def to_fault_event(he):
-    fault_event = {
-        "id": str(uuid.uuid1()),
-        "partitionKey": str(uuid.uuid4()),
-        "type": FAULT_EVENT_TYPE,
-        "timestamp": now(),
-        "tags": {
-            "functionname": os.getenv("AWS_LAMBDA_FUNCTION_NAME") or "None",
-            "pipeline": he.uow["pipeline"] or "None",
-        },
-        "err": {
-            "name": he.name,
-            "message": he.message,
-            "stack": "".join(
-                traceback.format_exception(etype=he.name, value=he, tb=he.__traceback__)
-            ),
-        },
-        "uow": he.uow,  # trimAndRedact(err.uow),
-    }
-    return fault_event
-
-
-# def faults(e, source):
-#   global the_faults
-#   if type(e) == HandledException:
-#     the_faults.append({
-#       "id": uuid.uuid1(),
-#       "partitionKey": uuid.uuid4(),
-#       "type": FAULT_EVENT_TYPE,
-#       "timestamp": now(),
-#     })
-
-
-def to_uow(fault):
-    return {"event": fault}
-
-
 def flush_faults(**opt):
+    def to_uow(fault):
+        return {"event": fault}
+
+    def to_fault_event(handled_error):
+        return {
+            "id": str(uuid.uuid1()),
+            "partitionKey": str(uuid.uuid4()),
+            "type": FAULT_EVENT_TYPE,
+            "timestamp": now(),
+            "tags": {
+                "functionname": os.getenv("AWS_LAMBDA_FUNCTION_NAME") or "None",
+                "pipeline": handled_error.uow.get("pipeline", "None"),
+            },
+            "err": {
+                "name": handled_error.name,
+                "message": handled_error.message,
+                "stack": "".join(
+                    traceback.format_exception(
+                        etype=handled_error.name,
+                        value=handled_error,
+                        tb=handled_error.__traceback__,
+                    )
+                ),
+            },
+            "uow": handled_error.uow,  # trimAndRedact(err.uow),
+        }
+
     def _flush_faults(s):
         return rx.pipe(
             ops.map(to_fault_event),

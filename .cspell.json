@@ -1,11 +1,16 @@
 {
   "words": [
+    "obv",
+    "obvs",
     "isort",
+    "etype",
     "pytest",
     "awslambdastream",
     "unbatch",
     "boto",
     "Stubber",
-    "botocore"
+    "botocore",
+    "uows",
+    "uow"
   ]
 }

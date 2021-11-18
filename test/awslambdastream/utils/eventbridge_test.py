@@ -4,8 +4,8 @@ import pytest
 import rx
 from rx import operators as ops
 
-from awslambdastream.faults import HandledException
 from awslambdastream.utils.eventbridge import publish_to_eventbridge as publish
+from awslambdastream.utils.faults import HandledException
 
 
 def test_batch_and_publish(mocker):

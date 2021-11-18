@@ -1,15 +1,11 @@
-import sys
 from collections import namedtuple
 from functools import reduce
 
 import rx
 from rx import operators as ops
-from rx.core import Observable
-from rx.subject import ReplaySubject, Subject
 
-from awslambdastream.faults import fault_handler, flush_faults
-from awslambdastream.utils.faults import is_error
-from awslambdastream.utils.misc import not_
+from awslambdastream.faults import flush_faults
+from awslambdastream.utils.pipelines import run_pipelines
 
 the_pipelines = {}
 
@@ -35,7 +31,7 @@ def initialize(pipelines, **opt):
 
 
 def assemble(**opt):
-    def assemble_(head, include_fault_handler=True) -> Observable:
+    def _assemble(head, include_fault_handler=True):
         print("assemble")
         keys = the_pipelines.keys()
 
@@ -46,49 +42,22 @@ def assemble(**opt):
 
         lines = reduce(reducer, keys, [])
 
-        if len(lines) > 0:
-
-            def multicast_mapper(lines):
-                def multicast_mapper_(shared):  # shared is multicast source Observable
-                    def pl_mapper(pipeline):
-                        pipe_ops = [pipeline]
-                        if include_fault_handler:
-                            pipe_ops.append(ops.catch(fault_handler))
-
-                        return shared.pipe(
-                            ops.do_action(lambda x: print("INSIDE 1")),
-                            ops.map(
-                                lambda uow: {
-                                    "pipeline": pipeline.id,  # todo: change to pipeline id
-                                    **uow,
-                                }
-                            ),
-                            ops.do_action(lambda x: print("INSIDE 2")),
-                            ops.flat_map(lambda x: rx.of(x).pipe(*pipe_ops)),
-                            ops.do_action(lambda x: print("INSIDE 3")),
-                        )
-
-                    return rx.merge(*map(pl_mapper, lines))
-
-                return multicast_mapper_
-
-            # todo: see original, what's with last pipeline?
-            merged = head.pipe(
-                ops.do_action(lambda x: print("BEFORE MULTICAST!!")),
-                ops.multicast(
-                    subject_factory=lambda _: Subject(), mapper=multicast_mapper(lines)
+        for i, l in enumerate(lines):
+            lines[i] = rx.pipe(
+                ops.map(
+                    lambda uow: {
+                        "pipeline": getattr(l, "id", None),
+                        **uow,
+                    }
                 ),
-                ops.do_action(lambda x: print("AFTER MULTICAST!!")),
+                l,
             )
-            replay = (
-                ReplaySubject()
-            )  # through ReplaySubject otherwise problems with concat on hot observable
-            merged.subscribe(replay)
 
-            main = replay.pipe(ops.filter(not_(is_error)))
-            errors = replay.pipe(ops.filter(is_error), flush_faults(**opt))
+        return run_pipelines(
+            *lines,
+            handled_error_handler=flush_faults(**opt)
+            if include_fault_handler
+            else None,
+        )(head)
 
-            return rx.concat(main, errors)
-        # todo: else? (len(lines) == 0) what to return?
-
-    return assemble_
+    return _assemble

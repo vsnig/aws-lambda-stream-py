@@ -13,6 +13,6 @@ class EventBridgeConnector:
             response = self.bus.put_events(**params)
             self.logger.info(response)
             return response
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             self.logger.error(e)
             raise e

@@ -1,9 +1,10 @@
 from rx import operators as ops
 
-from awslambdastream.faults import FAULT_EVENT_TYPE, handled
+from awslambdastream.faults import FAULT_EVENT_TYPE
 from awslambdastream.from_ import from_kinesis, to_kinesis_records
 from awslambdastream.pipelines import initialize
 from awslambdastream.utils import default_options
+from awslambdastream.utils.faults import handled_from
 
 
 def test_invoke_all_pipelines():
@@ -53,7 +54,7 @@ def test_propagate_pipeline_errors(mocker):
     def pl(**opt):
         def mapper(uow):
             e = ValueError("simulated error")
-            h = handled.of(e, uow)
+            h = handled_from(e, uow)
             raise h
 
         def _pl(s):
@@ -86,4 +87,5 @@ def test_propagate_pipeline_errors(mocker):
 
     assert collected[0]["event"]["uow"] != None
 
-    # propagate errors from head - not implemented
+
+# propagate errors from head - not implemented

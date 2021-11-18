@@ -8,4 +8,5 @@ class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, bytes):
             return str(obj, encoding="ascii")
-        return json.JSONEncoder.default(self, obj)
+        else:  # pragma: no cover
+            return json.JSONEncoder.default(self, obj)
