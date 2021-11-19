@@ -3,7 +3,7 @@
 **_(non-official non-complete) python implementation of [aws-lambda-stream](https://github.com/jgilbert01/aws-lambda-stream)_**
 
 ## Details and differences
-snake_case instead of camelCase in variables, function names etc. 
+snake_case instead of camelCase in variables, function names etc. except UOW field names 
 
 options are passed as named arguments
 
