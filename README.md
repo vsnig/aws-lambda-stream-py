@@ -1,6 +1,6 @@
 # aws-lambda-stream-py
 
-**_(non-official) python implementation of [aws-lambda-stream](https://github.com/jgilbert01/aws-lambda-stream)_**
+**_(non-official non-complete) python implementation of [aws-lambda-stream](https://github.com/jgilbert01/aws-lambda-stream)_**
 
 ## Details and differences
 snake_case instead of camelCase in variables, function names etc. 
@@ -30,39 +30,9 @@ Most useful features for me at the moment. Basically, it's pipelines for process
 - Python 3.9+
 
 ## Install
-`poetry add git+https://github.com/vsnig/aws-lambda-stream-py.git`
+`poetry add git+https://github.com/vsnig/aws-lambda-stream-py.git@master`
 
 ## Example
-```python
-# classify_pipeline.py
-from rx import operators as ops
-
-from awslambdastream import faulty
-
-def classify_pipeline(**opt):
-    def _classify_pipeline(s):
-        return s.pipe(
-            ops.filter(on_event),
-            ops.map(to_classification_result),
-            ops.map(to_publish_request),
-            opt["publish"](**opt),
-        )
-
-    return _classify_pipeline
-
-
-@faulty
-def on_event(uow):
-    return uow["event"]["type"] == "document-created"
-
-
-@faulty
-def to_classification_result(uow):
-    result = classify_text(uow["event"]["document"]["text"])
-    return {**uow, "classificationResult": result}
-
-...
-```
 
 ```python
 # listener.py
@@ -92,3 +62,49 @@ def handle(event, context):
     Handler({**OPTIONS}).handle(event).run()
     return "Success"
 ```
+
+```python
+# classify_pipeline.py
+from rx import operators as ops
+
+from awslambdastream import faulty
+
+from ..utils import classify-text
+
+
+def classify_pipeline(**opt):
+    def _classify_pipeline(s):
+        return s.pipe(
+            ops.filter(on_event),
+            ops.map(to_classification_result),
+            ops.map(to_emit),
+            opt["publish"](**opt, event_field="emit"),
+        )
+
+    return _classify_pipeline
+
+
+@faulty
+def on_event(uow):
+    return uow["event"]["type"] == "document-created"
+
+
+@faulty
+def to_classification_result(uow):
+    result = classify_text(uow["event"]["document"]["text"])
+    return {**uow, "classificationResult": result}
+
+
+@faulty
+def to_emit(uow):
+    return {
+        **uow,
+        "emit": {
+            **uow["event"],
+            "type": "document-classified",
+            "cls": uow["classificationResult"],
+        },
+    }
+```
+
+
