@@ -5,7 +5,7 @@
 ## Details and differences
 snake_case instead of camelCase in variables, function names etc. 
 
-options are passed as named arguments instead of object
+options are passed as named arguments
 
 `RxPY` in place of `Highland.js` as underlying reactive framework.
 
