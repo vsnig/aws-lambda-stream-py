@@ -67,6 +67,7 @@ def handle(event, context):
 
 ```python
 # classify_pipeline.py
+import rx
 from rx import operators as ops
 
 from awslambdastream import faulty
@@ -75,15 +76,12 @@ from ..utils import classify_text
 
 
 def classify_pipeline(**opt):
-    def _classify_pipeline(s):
-        return s.pipe(
-            ops.filter(on_event),
-            ops.map(to_classification_result),
-            ops.map(to_emit),
-            opt["publish"](**opt, event_field="emit"),
-        )
-
-    return _classify_pipeline
+    return rx.pipe(
+      ops.filter(on_event),
+      ops.map(to_classification_result),
+      ops.map(to_emit),
+      opt["publish"](**opt, event_field="emit"),
+    )
 
 
 @faulty
