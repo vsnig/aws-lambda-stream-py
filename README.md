@@ -5,6 +5,8 @@
 ## Details and differences
 snake_case instead of camelCase in variables, function names etc. 
 
+options are passed as named arguments instead of object
+
 `RxPY` in place of `Highland.js` as underlying reactive framework.
 
 ## What's implemented
@@ -69,7 +71,7 @@ from rx import operators as ops
 
 from awslambdastream import faulty
 
-from ..utils import classify-text
+from ..utils import classify_text
 
 
 def classify_pipeline(**opt):
