@@ -3,9 +3,15 @@ from botocore.config import Config
 
 
 class EventBridgeConnector:
-    def __init__(self, *, timeout=1000, logger):
+    def __init__(
+        self,
+        *,
+        timeout=1000,
+        endpoint_url=None,
+        logger,
+    ):
         config = Config(read_timeout=timeout)
-        self.bus = boto3.client("events", config=config)
+        self.bus = boto3.client("events", config=config, endpoint_url=endpoint_url)
         self.logger = logger
 
     def put_events(self, **params):

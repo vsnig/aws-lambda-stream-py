@@ -20,9 +20,10 @@ def publish_to_eventbridge(
     batch_size=10,
     parallel=8,
     handle_errors=True,
+    endpoint_url=None,
     **_,
 ):
-    connector = EventBridgeConnector(logger=logger)
+    connector = EventBridgeConnector(logger=logger, endpoint_url=endpoint_url)
     pool_scheduler = ThreadPoolScheduler(parallel)
 
     def to_input_params(batch_uow):
