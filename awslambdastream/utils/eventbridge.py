@@ -15,13 +15,13 @@ from awslambdastream.utils.json import MyEncoder
 
 def publish_to_eventbridge(
     logger=logging.getLogger("eventbridge"),
-    bus_name="None",
+    bus_name=os.getenv("BUS_NAME") or "None",
     source="custom",
     event_field="event",
-    batch_size=10,
-    parallel=8,
+    batch_size=os.getenv("PUBLISH_BATCH_SIZE") or os.getenv("BATCH_SIZE") or 10,
+    parallel=os.getenv("PUBLISH_PARALLEL") or os.getenv("PARALLEL") or 8,
+    endpoint_url=os.getenv("EVENTBRIDGE_ENDPOINT") or None,  # for localstack testing
     handle_errors=True,
-    endpoint_url=os.getenv("EVENTBRIDGE_ENDPOINT") or None,
     **_,
 ):
     connector = EventBridgeConnector(logger=logger, endpoint_url=endpoint_url)
