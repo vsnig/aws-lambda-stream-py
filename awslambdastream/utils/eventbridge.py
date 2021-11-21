@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 from functools import reduce
@@ -20,7 +21,7 @@ def publish_to_eventbridge(
     batch_size=10,
     parallel=8,
     handle_errors=True,
-    endpoint_url=None,
+    endpoint_url=os.getenv("EVENTBRIDGE_ENDPOINT") or None,
     **_,
 ):
     connector = EventBridgeConnector(logger=logger, endpoint_url=endpoint_url)
