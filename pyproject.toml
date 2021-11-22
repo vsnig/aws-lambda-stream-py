@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "awslambdastream"
-version = "0.1.5"
+version = "0.1.6"
 description = ""
 authors = ["Viacheslav Snizhko <4790093+snegostup@users.noreply.github.com>"]
 
@@ -8,6 +8,7 @@ authors = ["Viacheslav Snizhko <4790093+snegostup@users.noreply.github.com>"]
 python = "^3.9"
 boto3 = "^1.18.64"
 rx = "^3.2.0"
+numpyencoder = "^0.3.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
