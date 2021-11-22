@@ -10,3 +10,7 @@ class MyEncoder(json.JSONEncoder):
             return str(obj, encoding="ascii")
         else:  # pragma: no cover
             return json.JSONEncoder.default(self, obj)
+
+
+def json_dumps(obj):
+    return json.dumps(obj, cls=MyEncoder)

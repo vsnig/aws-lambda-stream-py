@@ -10,7 +10,7 @@ options are passed as named arguments
 `RxPY` in place of `Highland.js` as underlying reactive framework.
 
 ## What's implemented
-Most useful features for me at the moment. Basically, it's pipelines for processing Kinesis events and publishing to EventBridge (with parallel processing and error handling).
+Most useful features for me at the moment. Basically, it's pipelines for processing Kinesis events and publishing to EventBridge.
 ### pipelines
  - [x]  pipeline initialization and execution
  - [x]  pipeline error propagation/publishing
