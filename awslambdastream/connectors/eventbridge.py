@@ -7,7 +7,7 @@ class EventBridgeConnector:
         self,
         *,
         timeout=1000,
-        endpoint_url=None,
+        endpoint_url,
         logger,
     ):
         config = Config(read_timeout=timeout)
