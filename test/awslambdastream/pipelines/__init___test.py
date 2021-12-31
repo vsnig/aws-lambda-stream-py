@@ -37,7 +37,6 @@ def test_invoke_all_pipelines():
             **default_options
         )
         .assemble(from_kinesis(events))
-        .pipe(ops.to_list())
         .run()
     )
 
@@ -71,13 +70,11 @@ def test_propagate_pipeline_errors(mocker):
     )
 
     collected = (
-        initialize({"px1": pl}, **default_options)
-        .assemble(from_kinesis(events))
-        .pipe(ops.to_list())
-        .run()
+        initialize({"px1": pl}, **default_options).assemble(from_kinesis(events)).run()
     )
 
     assert len(collected) == 1
+    print(collected)
     assert collected[0]["event"]["type"] == FAULT_EVENT_TYPE
     assert collected[0]["event"]["err"]["name"] == "ValueError"
     assert collected[0]["event"]["err"]["message"] == "simulated error"

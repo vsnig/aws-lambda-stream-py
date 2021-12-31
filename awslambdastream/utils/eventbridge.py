@@ -27,8 +27,6 @@ def publish_to_eventbridge(
     connector = EventBridgeConnector(logger=logger, endpoint_url=endpoint_url)
     pool_scheduler = ThreadPoolScheduler(parallel)
 
-    print("bus_name:::::::::", bus_name)
-
     def to_input_params(batch_uow):
         def makeEntry(uow):
             return {

@@ -32,7 +32,6 @@ def initialize(pipelines, **opt):
 
 def assemble(**opt):
     def _assemble(head, include_fault_handler=True):
-        print("assemble")
         keys = the_pipelines.keys()
 
         def reducer(a, key):
@@ -58,6 +57,6 @@ def assemble(**opt):
             handled_error_handler=flush_faults(**opt)
             if include_fault_handler
             else None,
-        )(head)
+        )(head).pipe(ops.to_list())
 
     return _assemble

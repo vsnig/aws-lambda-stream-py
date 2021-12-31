@@ -7,14 +7,13 @@ snake_case instead of camelCase in variables, function names etc. except UOW fie
 
 options are passed as named arguments
 
-`RxPY` in place of `Highland.js` as underlying reactive framework.
+`RxPY` in place of `Highland.js` as underlying reactive framework
 
 ## What's implemented
 Most useful features for me at the moment. Basically, it's pipelines for processing Kinesis events and publishing to EventBridge.
 ### pipelines
  - [x]  pipeline initialization and execution
  - [x]  pipeline error propagation/publishing
- - [ ]  head error propagation/publishing
 
 ### connectors
 - [x] EventBridgeConnector
@@ -30,6 +29,7 @@ Most useful features for me at the moment. Basically, it's pipelines for process
 
 ## Requirements
 - Python 3.9+
+- Poetry
 
 ## Install
 `poetry add git+https://github.com/vsnig/aws-lambda-stream-py.git@master`
