@@ -33,6 +33,14 @@ def test_batch_and_publish(mocker):
             "id": "79a0d8f0-0eef-11ea-8d71-362b9e155667",
             "type": "p1",
             "partitionKey": "79a0d8f0-0eef-11ea-8d71-362b9e155667",
+            "tags": {
+                "account": "None",
+                "region": "us-east-1",
+                "stage": "None",
+                "source": "None",
+                "functionname": "None",
+                "pipeline": "None",
+            },
         },
         "inputParams": {
             "Entries": [
@@ -40,18 +48,13 @@ def test_batch_and_publish(mocker):
                     "EventBusName": "None",
                     "Source": "custom",
                     "DetailType": "p1",
-                    "Detail": json.dumps(
-                        {
-                            "id": "79a0d8f0-0eef-11ea-8d71-362b9e155667",
-                            "type": "p1",
-                            "partitionKey": "79a0d8f0-0eef-11ea-8d71-362b9e155667",
-                        }
-                    ),
+                    "Detail": '{"id": "79a0d8f0-0eef-11ea-8d71-362b9e155667", "type": "p1", "partitionKey": "79a0d8f0-0eef-11ea-8d71-362b9e155667", "tags": {"account": "None", "region": "us-east-1", "stage": "None", "source": "None", "functionname": "None", "pipeline": "None"}}',
                 }
             ]
         },
         "publishResponse": {"FailedEntryCount": 0},
     }
+
     # print(stub.call_args_list)
     # stub.assert_called_with(Entries=[{
     #   "EventBusName": 'None',
@@ -94,6 +97,14 @@ def test_throw_handled_error(mocker):
                     "id": "79a0d8f0-0eef-11ea-8d71-362b9e155667",
                     "type": "p1",
                     "partitionKey": "79a0d8f0-0eef-11ea-8d71-362b9e155667",
+                    "tags": {
+                        "account": "None",
+                        "region": "us-east-1",
+                        "stage": "None",
+                        "source": "None",
+                        "functionname": "None",
+                        "pipeline": "None",
+                    },
                 }
             }
         ],
@@ -103,7 +114,7 @@ def test_throw_handled_error(mocker):
                     "EventBusName": "None",
                     "Source": "custom",
                     "DetailType": "p1",
-                    "Detail": '{"id": "79a0d8f0-0eef-11ea-8d71-362b9e155667", "type": "p1", "partitionKey": "79a0d8f0-0eef-11ea-8d71-362b9e155667"}',
+                    "Detail": '{"id": "79a0d8f0-0eef-11ea-8d71-362b9e155667", "type": "p1", "partitionKey": "79a0d8f0-0eef-11ea-8d71-362b9e155667", "tags": {"account": "None", "region": "us-east-1", "stage": "None", "source": "None", "functionname": "None", "pipeline": "None"}}',
                 }
             ]
         },
@@ -141,12 +152,20 @@ def test_handle_failed_entry(mocker):
                     "id": "14f46ef2-0ef0-11ea-8d71-362b9e155667",
                     "type": "p2",
                     "partitionKey": "f440c880-4c41-4965-8658-2cbd503a2c73",
+                    "tags": {
+                        "account": "None",
+                        "region": "us-east-1",
+                        "stage": "None",
+                        "source": "None",
+                        "functionname": "None",
+                        "pipeline": "None",
+                    },
                 },
                 "inputParam": {
                     "EventBusName": "None",
                     "Source": "custom",
                     "DetailType": "p2",
-                    "Detail": '{"id": "14f46ef2-0ef0-11ea-8d71-362b9e155667", "type": "p2", "partitionKey": "f440c880-4c41-4965-8658-2cbd503a2c73"}',
+                    "Detail": '{"id": "14f46ef2-0ef0-11ea-8d71-362b9e155667", "type": "p2", "partitionKey": "f440c880-4c41-4965-8658-2cbd503a2c73", "tags": {"account": "None", "region": "us-east-1", "stage": "None", "source": "None", "functionname": "None", "pipeline": "None"}}',
                 },
                 "err": {"code": "1", "msg": "M1"},
             }

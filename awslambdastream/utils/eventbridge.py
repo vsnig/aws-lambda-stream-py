@@ -8,6 +8,7 @@ from rx import operators as ops
 from rx.scheduler.threadpoolscheduler import ThreadPoolScheduler
 
 from awslambdastream.connectors.eventbridge import EventBridgeConnector
+from awslambdastream.utils.tags import adorn_standard_tags
 from awslambdastream.utils.batch import to_batch_uow, unbatch_uow
 from awslambdastream.utils.faults import throw_fault
 from awslambdastream.utils.json import MyEncoder
@@ -52,6 +53,8 @@ def publish_to_eventbridge(
 
     def _publish(source):
         return source.pipe(
+            ops.map(adorn_standard_tags(event_field)),
+            # ops.do_action(lambda uow: print(uow)),
             ops.buffer_with_count(batch_size),
             ops.map(to_batch_uow),
             ops.map(to_input_params),
