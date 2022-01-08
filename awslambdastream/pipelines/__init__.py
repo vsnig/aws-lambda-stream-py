@@ -4,7 +4,6 @@ from functools import reduce
 import rx
 from rx import operators as ops
 
-from awslambdastream.faults import flush_faults
 from awslambdastream.utils.pipelines import run_pipelines
 
 the_pipelines = {}
@@ -52,11 +51,6 @@ def assemble(**opt):
                 l,
             )
 
-        return run_pipelines(
-            *lines,
-            handled_error_handler=flush_faults(**opt)
-            if include_fault_handler
-            else None,
-        )(head).pipe(ops.to_list())
+        return run_pipelines(*lines)(head).pipe(ops.to_list())
 
     return _assemble
