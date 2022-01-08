@@ -55,9 +55,9 @@ class Handler:
     def __init__(self, options=OPTIONS):
         self.options = options
 
-    def handle(self, event, include_errors=True):
+    def handle(self, event):
         return initialize(PIPELINES, **self.options).assemble(
-            from_kinesis(event), include_errors
+            from_kinesis(event)
         )
 
 
