@@ -30,7 +30,7 @@ def initialize(pipelines, **opt):
 
 
 def assemble(**opt):
-    def _assemble(head, include_fault_handler=True):
+    def _assemble(head):
         keys = the_pipelines.keys()
 
         def reducer(a, key):
