@@ -30,7 +30,7 @@ options are passed as named arguments
 `RxPY` in place of `Highland.js` as underlying reactive framework
 
 ## Fault handling not implemented :(
-..because of observable contract that requires observable to stop on error. The trick with lifting UOW and catching error in new observer, then flat_map'ing disables batch functionality that is unacceptable. Suggestions are welcome.
+..because of observable contract that requires observable to stop on error. The trick with lifting UOW and catching error in new observable, then flat_map'ing disables batch functionality that is unacceptable. Suggestions are welcome.
 ## Requirements
 - Python 3.9+
 - Poetry
