@@ -1,10 +1,8 @@
+import rx
 from rx import operators as ops
-
-from awslambdastream.faults import FAULT_EVENT_TYPE
 from awslambdastream.from_ import from_kinesis, to_kinesis_records
 from awslambdastream.pipelines import initialize
 from awslambdastream.utils import default_options
-from awslambdastream.utils.faults import handled_from
 
 
 def test_invoke_all_pipelines():
@@ -39,50 +37,87 @@ def test_invoke_all_pipelines():
         .assemble(from_kinesis(events))
         .run()
     )
+    # pprint(collected)
 
     assert len(collected) == 3
     assert counter == 3
 
 
-def test_propagate_pipeline_errors(mocker):
-    mocker.patch(
-        "awslambdastream.utils.eventbridge.EventBridgeConnector.put_events",
-        return_value={"FailedEntryCount": 0},
-    )
-
+def test_invoke_pipeline_with_buffer():
     def pl(**opt):
-        def mapper(uow):
-            e = ValueError("simulated error")
-            h = handled_from(e, uow)
-            raise h
-
-        def _pl(s):
-            return s.pipe(ops.map(mapper))
-
-        return _pl
+        return rx.pipe(ops.buffer_with_count(2))
 
     events = to_kinesis_records(
         [
             {
-                "type": "t2",
-            }
+                "type": "t1",
+            },
+            {
+                "type": "t1",
+            },
         ]
     )
-
     collected = (
-        initialize({"px1": pl}, **default_options).assemble(from_kinesis(events)).run()
+        initialize(
+            {
+                "p1": pl,
+            },
+            **default_options
+        )
+        .assemble(from_kinesis(events))
+        .run()
     )
+    # collected = rx.from_(events["Records"]).pipe(pl(), ops.to_list()).run()
+    # pprint(collected)
 
-    assert len(collected) == 1
-    print(collected)
-    assert collected[0]["event"]["type"] == FAULT_EVENT_TYPE
-    assert collected[0]["event"]["err"]["name"] == "ValueError"
-    assert collected[0]["event"]["err"]["message"] == "simulated error"
+    assert collected == [
+        [
+            {
+                "event": {"id": "shardId-000000000000:0", "type": "t1"},
+                "pipeline": "p1",
+                "record": {
+                    "awsRegion": "us-east-1",
+                    "eventID": "shardId-000000000000:0",
+                    "eventSource": "aws:kinesis",
+                    "kinesis": {"data": b"eyJ0eXBlIjogInQxIn0=", "sequenceNumber": "0"},
+                },
+            },
+            {
+                "event": {"id": "shardId-000000000000:1", "type": "t1"},
+                "pipeline": "p1",
+                "record": {
+                    "awsRegion": "us-east-1",
+                    "eventID": "shardId-000000000000:1",
+                    "eventSource": "aws:kinesis",
+                    "kinesis": {"data": b"eyJ0eXBlIjogInQxIn0=", "sequenceNumber": "1"},
+                },
+            },
+        ]
+    ]
 
-    assert collected[0]["event"]["tags"]["functionname"] == "None"
-    assert collected[0]["event"]["tags"]["pipeline"] == "px1"
-
-    assert collected[0]["event"]["uow"] != None
-
-
-# propagate errors from head - not implemented
+    [
+        [
+            {
+                "event": {"id": "shardId-000000000000:0", "type": "t1"},
+                "pipeline": "p1",
+                "record": {
+                    "awsRegion": "us-east-1",
+                    "eventID": "shardId-000000000000:0",
+                    "eventSource": "aws:kinesis",
+                    "kinesis": {"data": b"eyJ0eXBlIjogInQxIn0=", "sequenceNumber": "0"},
+                },
+            }
+        ],
+        [
+            {
+                "event": {"id": "shardId-000000000000:1", "type": "t1"},
+                "pipeline": "p1",
+                "record": {
+                    "awsRegion": "us-east-1",
+                    "eventID": "shardId-000000000000:1",
+                    "eventSource": "aws:kinesis",
+                    "kinesis": {"data": b"eyJ0eXBlIjogInQxIn0=", "sequenceNumber": "1"},
+                },
+            }
+        ],
+    ]
