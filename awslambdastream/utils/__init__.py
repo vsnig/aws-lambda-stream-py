@@ -6,3 +6,4 @@ from .misc import *
 from .opt import *
 from .pipelines import *
 from .time import *
+from .print import *

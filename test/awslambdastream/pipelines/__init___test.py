@@ -3,6 +3,7 @@ from rx import operators as ops
 from awslambdastream.from_ import from_kinesis, to_kinesis_records
 from awslambdastream.pipelines import initialize
 from awslambdastream.utils import default_options
+from pprint import pprint
 
 
 def test_invoke_all_pipelines():
@@ -68,56 +69,12 @@ def test_invoke_pipeline_with_buffer():
         .run()
     )
     # collected = rx.from_(events["Records"]).pipe(pl(), ops.to_list()).run()
-    # pprint(collected)
+    pprint(collected)
 
-    assert collected == [
-        [
-            {
-                "event": {"id": "shardId-000000000000:0", "type": "t1"},
-                "pipeline": "p1",
-                "record": {
-                    "awsRegion": "us-east-1",
-                    "eventID": "shardId-000000000000:0",
-                    "eventSource": "aws:kinesis",
-                    "kinesis": {"data": b"eyJ0eXBlIjogInQxIn0=", "sequenceNumber": "0"},
-                },
-            },
-            {
-                "event": {"id": "shardId-000000000000:1", "type": "t1"},
-                "pipeline": "p1",
-                "record": {
-                    "awsRegion": "us-east-1",
-                    "eventID": "shardId-000000000000:1",
-                    "eventSource": "aws:kinesis",
-                    "kinesis": {"data": b"eyJ0eXBlIjogInQxIn0=", "sequenceNumber": "1"},
-                },
-            },
-        ]
-    ]
+    assert len(collected) == 1
+    assert len(collected[0]) == 2
+    assert collected[0][0]["event"] == {"id": "shardId-000000000000:0", "type": "t1"}
+    assert collected[0][0]["pipeline"] == "p1"
 
-    [
-        [
-            {
-                "event": {"id": "shardId-000000000000:0", "type": "t1"},
-                "pipeline": "p1",
-                "record": {
-                    "awsRegion": "us-east-1",
-                    "eventID": "shardId-000000000000:0",
-                    "eventSource": "aws:kinesis",
-                    "kinesis": {"data": b"eyJ0eXBlIjogInQxIn0=", "sequenceNumber": "0"},
-                },
-            }
-        ],
-        [
-            {
-                "event": {"id": "shardId-000000000000:1", "type": "t1"},
-                "pipeline": "p1",
-                "record": {
-                    "awsRegion": "us-east-1",
-                    "eventID": "shardId-000000000000:1",
-                    "eventSource": "aws:kinesis",
-                    "kinesis": {"data": b"eyJ0eXBlIjogInQxIn0=", "sequenceNumber": "1"},
-                },
-            }
-        ],
-    ]
+    assert collected[0][1]["event"] == {"id": "shardId-000000000000:1", "type": "t1"}
+    assert collected[0][1]["pipeline"] == "p1"

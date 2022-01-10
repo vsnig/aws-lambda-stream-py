@@ -1,3 +1,4 @@
+import logging
 from collections import namedtuple
 from functools import reduce
 
@@ -5,15 +6,22 @@ import rx
 from rx import operators as ops
 
 from awslambdastream.utils.pipelines import run_pipelines
+from awslambdastream.utils.logging import setup_logging
 
 the_pipelines = {}
+
+logger = logging.getLogger("pl:init")
 
 
 def initialize(pipelines, **opt):
     Assembleable = namedtuple("Assembleable", "assemble")
     global the_pipelines
 
+    setup_logging()
+
     keys = pipelines.keys()
+
+    logger.info(f"initialize: {keys}")
 
     the_pipelines = reduce(
         lambda acc, id: {
@@ -41,11 +49,15 @@ def assemble(**opt):
         lines = reduce(reducer, keys, [])
 
         for i, l in enumerate(lines):
+            p_id = getattr(l, "id", None)
+            logger.info(f"FORK: {p_id}")
+
             lines[i] = rx.pipe(
                 ops.map(
                     lambda uow: {
-                        "pipeline": getattr(l, "id", None),
+                        "pipeline": p_id,
                         **uow,
+                        **add_logger(p_id),
                     }
                 ),
                 l,
@@ -54,3 +66,7 @@ def assemble(**opt):
         return run_pipelines(*lines)(head).pipe(ops.to_list())
 
     return _assemble
+
+
+def add_logger(id):
+    return {"logger": logging.getLogger(f"pl:{id}")}
