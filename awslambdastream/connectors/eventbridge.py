@@ -11,8 +11,9 @@ class EventBridgeConnector:
 
     def put_events(self, **params):
         try:
+            self.logger.info(params)
             response = self.bus.put_events(**params)
-            self.logger.info(response)
+            # self.logger.info(response)
             return response
         except Exception as e:  # pragma: no cover
             self.logger.error(e)

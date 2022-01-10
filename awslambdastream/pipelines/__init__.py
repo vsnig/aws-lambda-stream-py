@@ -1,3 +1,4 @@
+import json
 import logging
 from collections import namedtuple
 from functools import reduce
@@ -21,7 +22,7 @@ def initialize(pipelines, **opt):
 
     keys = pipelines.keys()
 
-    logger.info(f"initialize: {keys}")
+    logger.info(f"initialize: {json.dumps(keys)}")
 
     the_pipelines = reduce(
         lambda acc, id: {
