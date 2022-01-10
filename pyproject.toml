@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "awslambdastream"
-version = "0.2.001"
+version = "0.2.002"
 description = ""
 authors = ["Viacheslav Snizhko <4790093+snegostup@users.noreply.github.com>"]
 
