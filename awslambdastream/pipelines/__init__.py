@@ -20,7 +20,7 @@ def initialize(pipelines, **opt):
 
     setup_logging()
 
-    keys = pipelines.keys()
+    keys = list(pipelines.keys())
 
     logger.info(f"initialize: {json.dumps(keys)}")
 
